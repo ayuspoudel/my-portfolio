@@ -1,27 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { softwareProjects } from "../data/projects/software";
-import { fetchGitHubStatsForProjects, AggregatedStats } from "../utils/useGitHubStats";
+import React, { useEffect, useState } from "react"
+import { softwareProjects } from "../data/projects/software"
+import { fetchGitHubStatsForProjects, AggregatedStats } from "../utils/useGitHubStats"
+import ProjectModal from "./ProjectModal"
 
 export default function Projects() {
-  const [stats, setStats] = useState<AggregatedStats[]>([]);
+  const [stats, setStats] = useState<AggregatedStats[]>([])
+  const [activeProject, setActiveProject] = useState<string | null>(null)
 
   useEffect(() => {
-    const token = import.meta.env.VITE_GITHUB_TOKEN || "";
-    fetchGitHubStatsForProjects(softwareProjects, token).then(setStats);
-  }, []);
+    const token = import.meta.env.VITE_GITHUB_TOKEN || ""
+    fetchGitHubStatsForProjects(softwareProjects, token).then(setStats)
+  }, [])
 
   const getStats = (projectName: string) =>
-    stats.find((s) => s.project === projectName);
+    stats.find((s) => s.project === projectName)
 
   return (
     <section id="projects" className="projects-section">
       <h2 className="projects-heading">Projects</h2>
       <div className="projects-grid">
         {softwareProjects.map((proj, i) => {
-          const stat = getStats(proj.name);
-
+          const stat = getStats(proj.name)
           return (
-            <div key={i} className="project-card">
+            <div
+              key={i}
+              className="project-card"
+              onClick={() => setActiveProject(proj.slug)}
+            >
               <div className="project-image-container">
                 <img src={`/assets/projects/${proj.slug}/1.png`} alt={proj.name} />
               </div>
@@ -30,11 +35,7 @@ export default function Projects() {
                 <div className="project-stats-bar">
                   {/* Stars */}
                   <div className="stat-item" title="Stars">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 16 16"
-                      className="icon"
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className="icon">
                       <path
                         fill="currentColor"
                         d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.213.612a.75.75 
@@ -50,11 +51,7 @@ export default function Projects() {
 
                   {/* Commits */}
                   <div className="stat-item" title="Commits">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 16 16"
-                      className="icon"
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className="icon">
                       <path
                         fill="currentColor"
                         d="M7.5 1.75a.75.75 0 1 1 1.5 0v2.05a3.5 3.5 0 0 1 0 6.4v2.05a.75.75 
@@ -67,11 +64,7 @@ export default function Projects() {
 
                   {/* Issues */}
                   <div className="stat-item" title="Issues">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 16 16"
-                      className="icon"
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className="icon">
                       <path
                         fill="currentColor"
                         d="M8 1.5a6.5 6.5 0 1 0 0 13 
@@ -85,11 +78,7 @@ export default function Projects() {
 
                   {/* Pull Requests */}
                   <div className="stat-item" title="Pull Requests">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 16 16"
-                      className="icon"
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className="icon">
                       <path
                         fill="currentColor"
                         d="M5 3.25a.75.75 0 1 0-1.5 0A.75.75 0 0 0 
@@ -119,9 +108,17 @@ export default function Projects() {
                 </div>
               </div>
             </div>
-          );
+          )
         })}
       </div>
+
+      {activeProject && (
+        <ProjectModal
+          slug={activeProject}
+          isOpen={true}
+          onClose={() => setActiveProject(null)}
+        />
+      )}
     </section>
-  );
+  )
 }

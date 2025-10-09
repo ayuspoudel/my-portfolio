@@ -1,0 +1,532 @@
+
+src/assets/docs/tms/architecture.md
+# Task Management System (TMS) Architecture
+
+![../diagrams/tms/TMS.png]
+
+> This document breaks down the architecture of TMS, explaining how its components interact to provide a seamless, cloud-native orchestration platform.
+
+# Task Management System (TMS) Architecture
+
+![../diagrams/tms/TMS.png]
+
+> This document explains the architecture of TMS and how each component interacts to deliver an automated, cloud-native orchestration platform.
+
+### Overview
+
+TMS follows a modular, event-driven design that uses AWS services, serverless computing, and Kubernetes for execution. Each part of the system runs independently but communicates through events and shared tables. The platform is fully serverless on the control plane and uses EKS clusters only for runtime workloads.
+
+
+### 1. User Service
+
+* Handles user registration, login, authentication, and RBAC permissions.
+* Uses a simple JWT-based authentication middleware.
+* Persists user records in `User Table` and token data in `User Token Table`.
+* On each create or update event, pushes a message to the Event Bus.
+* These events are consumed by the Connect and EKS services to sync user data and permissions.
+
+
+### 2. Connect Service
+
+* Manages external integrations such as AWS accounts and GitHub connections.
+* Uses `Connect Table` to store credentials, metadata, and IAM role info.
+* Handles onboarding of AWS accounts via CloudFormation templates, creating IAM roles that the backend assumes for EKS provisioning.
+* Triggers `RBAC Table` updates for authorization across services.
+* Installs GitHub Apps, giving TMS access to repositories and jobs for orchestration.
+
+
+### 3. EKS Service
+
+* Automates EKS cluster creation, scaling, and management.
+* Uses Pulumi for infrastructure as code to provision all core components.
+* Manages clusters that include:
+
+  * VPC, subnets, and node groups (reserved and spot instances).
+  * Control plane security, IRSA roles, and add-ons.
+  * ArgoCD, Nginx ingress, Prometheus, Grafana, Loki, and FluentBit.
+* Saves all cluster metadata in the `EKS Info Table`.
+* Periodically reports node and workload metrics to the dashboard through Prometheus and S3.
+
+
+### 4. Job Scheduler Service
+
+* Handles creation and execution of jobs, GitHub workflows, and cron-based tasks.
+* Supports both short and long-running jobs with dynamic scaling.
+* Communicates with the EKS Service to allocate compute resources.
+* Uses `RBAC & EKS Info Table` to ensure jobs are executed in the correct namespace and cluster.
+* Pushes telemetry and job data to S3 and Athena for historical analysis.
+* Exposes job logs and statuses through the dashboard UI.
+
+
+### 5. Event Bus
+
+* Connects all Lambda-based services in a decoupled manner.
+* Propagates updates between User, Connect, and EKS services.
+* Ensures data consistency across tables without direct coupling.
+* Uses Amazon EventBridge for guaranteed delivery and fault isolation.
+
+
+### 6. Frontend and API Layer
+
+* The frontend is built using Vue.js and interacts with the backend through an API Gateway.
+* API endpoints follow the pattern `/user`, `/connect`, `/eks`, `/jobs`, and `/dashboard`.
+* All APIs are stateless and protected by the JWT authentication middleware.
+* The API layer simply routes requests to the appropriate Lambda functions.
+
+
+### 7. Observability and Monitoring
+
+* Each workload deployed through TMS automatically ships logs and metrics to the centralized monitoring stack.
+* Prometheus, Loki, and FluentBit collect cluster-level telemetry.
+* Grafana dashboards display performance metrics and cost breakdowns.
+* Long-term data is pushed to S3 and queried using Athena for cost and job analytics.
+
+
+### 8. Data Storage
+
+* All metadata, users, connections, and cluster info are stored in DynamoDB tables.
+* Logs and reports are stored in S3 for low-cost retention.
+* Job metrics and performance data are queryable via Athena.
+
+
+### 9. Deployment Flow
+
+1. User connects AWS and GitHub accounts from the UI.
+2. Connect Service triggers AWS account bootstrap using CloudFormation.
+3. EKS Service provisions a complete cluster using Pulumi and deploys ArgoCD.
+4. User creates jobs or links GitHub workflows with a TMS-provided label.
+5. Jobs are executed in the cluster and telemetry is streamed to the dashboard.
+6. Logs, metrics, and cost analytics are stored for visualization.
+
+
+### Summary
+
+TMS architecture is designed to be lightweight, event-driven, and fully automated.
+Each component focuses on a single responsibility but integrates through shared events and persistent storage.
+The result is a system that can deploy, monitor, and manage workloads at scale without manual intervention or infrastructure maintenance.
+src/assets/docs/tms/cluster.md
+# EKS Cluster Provisioning
+
+> This document explains how TMS provisions, configures, and manages an EKS cluster for each connected AWS account. The process is fully automated, event-driven, and uses Pulumi and ArgoCD to ensure consistency across environments.
+
+### 1. Overview
+
+Each user or organization in TMS can connect their AWS account and spin up a dedicated EKS cluster through a single API call or from the TMS UI.
+Once triggered, the entire lifecycle — VPC setup, IAM roles, node groups, addons, and ArgoCD bootstrap — is managed by the **EKS Service** using Pulumi.
+The cluster is ready for use in roughly 25–30 minutes with all essential workloads, dashboards, and monitoring pre-installed.
+
+
+
+### 2. Cluster Creation Flow
+
+1. **AWS Connection**
+
+   * The user first connects their AWS account through the Connect Service.
+   * TMS deploys a CloudFormation template that creates an IAM role with an external ID trust policy.
+   * This role allows TMS to assume permissions securely without storing static credentials.
+
+2. **EKS Provisioning Trigger**
+
+   * Once the AWS connection is verified, the user can click “Create Cluster” in the TMS UI.
+   * This triggers the EKS Service Lambda via API Gateway.
+   * The request payload includes:
+
+     * Cluster name
+     * AWS region
+     * Environment (dev, int, prod)
+     * Node configuration (instance type, desired/spot mix, scaling limits)
+
+3. **Pulumi Deployment**
+
+   * Pulumi runs with the assumed IAM role from the connected AWS account.
+   * It provisions:
+
+     * A dedicated **VPC** with private/public subnets across multiple AZs.
+     * **Security groups**, IAM roles, and OIDC provider for IRSA.
+     * The **EKS control plane** with version auto-detection.
+     * Two node groups:
+
+       * One **on-demand group** for control workloads.
+       * One **spot group** for dynamic job workloads.
+   * Pulumi outputs are stored in the `eks_metadata` table and S3 for reuse.
+
+
+
+### 3. Addon Installation
+
+After the cluster is up, TMS automatically installs a set of core addons via Pulumi and ArgoCD:
+
+| Addon                            | Purpose                                                 |
+| -- | - |
+| **ArgoCD**                       | GitOps management for workloads, jobs, and environments |
+| **Nginx Ingress**                | HTTP routing for APIs, dashboards, and job UIs          |
+| **Prometheus**                   | Metric collection for workloads and clusters            |
+| **Grafana**                      | Visualization for resource usage and costs              |
+| **Loki + FluentBit**             | Log aggregation from all pods and nodes                 |
+| **Cluster Autoscaler**           | Automatically scales worker nodes                       |
+| **AWS Load Balancer Controller** | Integrates AWS ALB/NLB for exposed services             |
+
+All addons are deployed declaratively using Helm charts managed through ArgoCD.
+Each environment has its own `values.yaml` to keep configuration isolated.
+
+
+
+### 4. Post-Provisioning Steps
+
+Once addons are installed, TMS performs a few finalization steps:
+
+* Syncs the kubeconfig and stores it securely (encrypted in S3).
+* Inserts metadata in the `EKS Info Table` for frontend and dashboard references.
+* Starts a background job that tests core components (Ingress, Grafana, ArgoCD API, etc.).
+* Marks the cluster as “Ready” in the UI once validation succeeds.
+
+
+
+### 5. Access and Namespace Management
+
+* Each organization is assigned a **dedicated namespace** for workloads.
+* RBAC and Kubernetes roles are automatically generated based on user roles from TMS (Owner/Admin/Developer/Viewer).
+* Owners and Admins can create additional namespaces or resource quotas from the dashboard.
+* Developers are restricted to their assigned namespaces.
+
+
+
+### 6. Cluster Maintenance
+
+* Pulumi refresh jobs run periodically to detect drift and re-sync infrastructure.
+* The cluster auto-updates minor EKS versions when available (configurable per org).
+* Addons are managed through ArgoCD syncs to ensure continuous reconciliation.
+* Metrics from Prometheus and logs from Loki are pushed to the TMS dashboard API for visualization.
+
+
+
+### 7. Cluster Deletion
+
+* Users can delete clusters directly from the dashboard.
+* The EKS Service triggers a Pulumi destroy operation using the same AWS role.
+* TMS waits for all dependent resources (nodes, load balancers, EBS volumes) to terminate before final cleanup.
+* Logs and historical data are retained in S3 for audit purposes.
+
+
+
+### 8. Summary
+
+The EKS Service in TMS abstracts away the complexity of provisioning Kubernetes clusters.
+Users never deal with Terraform, Pulumi state files, or IAM credentials — everything runs through automated, stateless Lambdas.
+The system guarantees consistency, cost efficiency, and observability by combining Pulumi’s infrastructure management with ArgoCD’s GitOps workflow.
+
+
+
+Would you like the next document to describe **how ArgoCD integrates with Pulumi and GitHub workflows** (the GitOps bridge pattern you mentioned earlier)? That’s a natural continuation from here.
+src/assets/docs/tms/gitops.md
+# ArgoCD and GitOps Integration
+
+> Explains how TMS connects Pulumi, ArgoCD, and GitHub to keep everything in sync automatically.
+
+### 1. Overview
+
+- Pulumi builds the infra — EKS, VPC, IAM, network.
+- ArgoCD manages everything inside the cluster.
+- Every job, API, or app is stored in Git as YAML.
+- When code changes, ArgoCD auto-syncs the cluster.
+- Git is the only source of truth.
+
+### 2. GitOps Bridge
+
+- Pulumi creates the cluster and sets up a `gitops` branch.
+- ArgoCD watches that branch for changes.
+- Pulumi commits any infra or config change as YAML.
+- ArgoCD detects it and applies it instantly.
+- Pulumi = outside cluster, ArgoCD = inside cluster.
+
+### 3. ArgoCD App Layout
+
+- Each cluster has a `root-app` that bootstraps everything.
+
+```
+argocd-root-app
+ ├── core-addons/
+ ├── workloads/
+ └── monitoring/
+```
+
+- Each folder is an Argo app with its own values file.
+- TMS updates them when users deploy or edit workloads.
+
+### 4. GitHub Integration
+
+- TMS listens to push and merge events.
+- On deploy, TMS commits YAML to the `gitops` branch.
+- ArgoCD sees the commit and syncs the change.
+- Every commit has metadata like cluster, env, and user.
+
+### 5. Webhook Syncs
+
+- ArgoCD has a webhook endpoint in the cluster.
+- When GitHub pushes new changes, TMS calls that webhook.
+- This triggers instant syncs, faster than default polling.
+
+### 6. Environment Promotion
+
+- Separate folders for dev, int, and prod.
+- User clicks promote → TMS clones YAML between envs.
+- It updates tags and labels.
+- ArgoCD syncs the promoted version automatically.
+
+### 7. Rollbacks
+
+- Every deployment is versioned in Git.
+- To rollback, revert a commit.
+- ArgoCD auto-restores the last stable state.
+
+### 8. Observability
+
+- Prometheus scrapes Argo metrics.
+- Grafana shows sync status, commit hash, and drift count.
+- Users can see what’s in sync and what failed.
+
+### 9. Summary
+
+- Pulumi builds, Git stores, ArgoCD syncs.
+- No manual kubectl or cluster access.
+- Full visibility, traceability, and automation in one loop.
+src/assets/docs/tms/orchestration.md
+# Workload Execution and Monitoring
+
+> Explains how TMS runs jobs, APIs, and workloads inside the cluster, and how users can track logs, costs, and performance in real time.
+
+## Overview
+- TMS treats every workload — job, API, or pipeline — as a Kubernetes object.  
+- Each workload runs in its own namespace under the user’s cluster.  
+- All deployments are created via YAML generated by the backend and committed to Git.  
+- ArgoCD applies those manifests automatically.
+
+## Workload Types
+- Jobs: one-time or scheduled cron jobs.  
+- APIs: long-running services or containerized endpoints.  
+- Pipelines: multi-step GitHub workflows running inside EKS using runners.  
+- Dashboards: Grafana-based analytics or monitoring views.  
+- Each type uses the same deployment engine but different templates.
+
+## Execution Model
+- When a user deploys a workload:  
+    - The backend generates a manifest (Deployment, CronJob, or Job).  
+    - It commits it to the GitOps repo under `/workloads/<type>/`.  
+    - ArgoCD syncs the change and spins up pods in the user’s namespace.  
+    - TMS watches pod events, logs, and resource usage using the Kubernetes API.  
+- No direct cluster access is required — everything runs declaratively.
+
+## Logging
+- All pods send logs to Loki via Fluentd.  
+- Users can view logs from the TMS UI in real time.  
+- Logs are indexed by job ID, namespace, and pod name.  
+- Old logs are archived automatically based on retention rules.
+
+## Monitoring
+- Prometheus collects metrics from all namespaces.  
+- Grafana dashboards show:  
+    - CPU and memory per workload  
+    - Success/failure ratio for jobs  
+    - API latency and uptime  
+    - Container restart counts  
+- Each metric links back to its workload in TMS.
+
+## Cost Tracking
+- Each job and API includes cost annotations.  
+- Prometheus metrics are aggregated with AWS CUR data.  
+- Users can view cost by:  
+    - Cluster  
+    - Namespace  
+    - Workload  
+    - Time range  
+- This helps identify expensive pipelines or inefficient deployments.
+
+## Concurrency and Scaling
+- TMS uses Kubernetes Horizontal Pod Autoscaler (HPA).  
+- APIs scale based on CPU or request load.  
+- Jobs and pipelines scale based on queue depth or cron concurrency.  
+- All scaling thresholds are configurable in the UI or YAML.
+
+## Security
+- Every workload runs under a scoped service account.  
+- RBAC ensures a user’s workload cannot access another namespace.  
+- Sensitive data (tokens, keys) is stored in Kubernetes Secrets managed by Vault.  
+- No workload gets cluster-admin access.
+
+## Notifications and Alerts
+- Each job and API can send status updates via email, Slack, or webhook.  
+- Alerts are generated for failed jobs, OOM kills, or high latency.  
+- The alerts dashboard summarizes all failures in one place.
+
+## Summary
+- Workloads in TMS run fully isolated, observable, and auditable.  
+- Logs, metrics, and costs are linked across every job.  
+- Users can deploy, monitor, and optimize workloads without ever touching kubectl.
+src/assets/docs/tms/overview.md
+# Task Management System (TMS)
+
+> TMS gives you a platform that’s **fully cloud-native**, **event-driven**, and **cost-efficient** — built by an engineer who wanted the same thing.
+
+TMS is a **cloud-native**, **serverless-first** platform that enables teams and organizations to **orchestrate, deploy, manage, and monitor** everything from cron jobs, GitHub pipelines, and ML workloads to standalone containers and APIs — all from a single unified dashboard.
+
+It bridges the gap between **serverless compute and Kubernetes elasticity**, giving you the flexibility of both worlds: the scalability of AWS Lambda and the persistence and observability of a fully managed Kubernetes runtime — but without the operational overhead.
+
+---
+
+### How I came up with this idea
+
+I’ve run into this problem multiple times — not having a reliable runtime for automations, APIs, or jobs that require unpredictable resources. Some jobs are tiny and short-lived, others are massive and long-running.
+AWS Lambda solves part of the problem, but monitoring costs add up quickly.
+Spot instances are great too, but they need babysitting — not ideal for automation workflows that should run hands-free.
+
+At one point, I caught myself thinking:
+
+> “What if there was a runtime that could handle **hundreds of workloads concurrently**, scale **down to zero when idle**, and still give you **real-time logs and analytics** of your executions?”
+
+Not just logs — but insights.
+How much CPU or memory did each job consume? Which workloads overlap in runtime? How can I parallelize or use matrix strategies to reduce overall costs?
+
+That’s when I started building **TMS** — a system that could deliver that exact experience: **self-healing, event-driven, cost-aware orchestration for modern DevOps workloads.**
+
+### How it solves real-world problems
+
+TMS eliminates a lot of pain points DevOps and platform engineers face daily:
+
+* **Replaces self-hosted EC2 GitHub Runners** — use dynamic EKS-based runners instead.
+* **Replaces Apache Airflow** for small to medium ETL or data automation pipelines.
+* **Replaces multiple AWS Lambdas + CloudWatch** — saving cost and reducing operational sprawl.
+* **Removes the need to host or babysit Kubernetes clusters.**
+* **Removes the need to set up EFK/ELF stacks**, manage Grafana dashboards, or deploy your own monitoring stack.
+* **Acts as a complete plug-and-play automation fabric** — from workflow orchestration to runtime visualization.
+
+
+### So many things... how does it do that?
+
+TMS is designed around **modular Lambda-based services** that talk to each other via an **event bus** and **AWS-backed persistence layer**, with the heavy workloads offloaded to **EKS clusters provisioned on demand**. Here’s how it all fits together:
+
+#### End-to-End Kubernetes Automation (EKS + Pulumi + ArgoCD)
+
+* Users can connect their **AWS accounts** to TMS through the web UI.
+* Once connected, they can navigate to the **Kubernetes section** and spin up a production-grade cluster with a single click.
+* Within **30 minutes**, a complete EKS environment is bootstrapped using **Pulumi** (for IaC) and **ArgoCD** (for GitOps).
+* The cluster automatically deploys core services:
+  * Nginx Ingress
+  * Prometheus, Grafana, Loki, and FluentBit
+  * ArgoCD controller
+  * EFS & AWS add-ons
+* Real-time logs, metrics, and cost reports stream into the **TMS Dashboard**.
+
+
+#### GitHub Workflow Integration
+
+* TMS provides an **official GitHub App** that users can install on their repositories.
+* The app grants secure access for TMS to trigger jobs, monitor pipelines, and run workflows on the newly created EKS cluster.
+* By simply adding a **TMS-provided runner label** in their GitHub workflow YAML, users can shift their workload execution into the EKS cluster managed by TMS — instantly scalable, fully observable.
+* Workflow logs, statuses, and artifacts appear in the **Logs**, **Jobs**, and **Dashboard** sections of TMS in real time.
+
+
+#### Multi-Service Backend (Serverless + Event Driven)
+
+Each part of TMS is its own isolated Lambda service following the **repository pattern**, all orchestrated by an API Gateway layer:
+
+* **User Service Lambda**
+  Handles signup, login, role assignment, and JWT token issuance.
+* **Connect Service Lambda**
+  Establishes AWS and GitHub integrations, updates RBAC, and syncs metadata.
+* **EKS Service Lambda**
+  Automates cluster creation, scaling, and resource management.
+* **Job Scheduler Lambda**
+  Manages long-running or short-lived jobs, integrates with GitHub Actions, and streams telemetry to S3, Athena, and Prometheus.
+
+All these services communicate asynchronously through **Amazon EventBridge** — ensuring a decoupled and resilient architecture that scales seamlessly.
+
+
+#### Job Orchestration & Observability
+
+* Jobs can be short, long-running, or even persistent workloads.
+* TMS automatically provisions resources for each based on metadata and concurrency limits.
+* Real-time job and system metrics are collected from **Prometheus** and **ElasticSearch**, enabling detailed dashboards that visualize:
+
+  * Job execution history
+  * Resource consumption (CPU, memory, duration)
+  * Error traces and retry attempts
+  * Cluster health and node utilization
+
+
+### Why it matters
+
+TMS isn’t just another orchestration layer. It’s designed for engineers who want **visibility and control** — without managing the plumbing themselves.
+It lets teams move from **“running code manually”** to **“automating everything with self-scaling runtimes.”**
+
+Whether it’s:
+
+* Running nightly jobs
+* Training ML models
+* Triggering GitHub Actions
+* Hosting internal APIs
+
+
+
+src/assets/docs/tms/security.md
+# Security Model
+
+> The TMS security model ensures that every interaction is authenticated, authorized, and traceable.
+> Short-lived tokens protect against misuse, RBAC isolates privileges by function, and IAM trust boundaries ensure that even connected AWS environments remain secure.
+> This approach provides complete accountability and minimal attack surface while maintaining operational flexibility across all services.
+
+TMS implements a strict token-based and role-based security model to ensure each API call, service interaction, and job execution is properly authorized. The design follows a zero-trust pattern where every component must authenticate itself, even within the internal network.
+
+### 1. Authentication
+
+* All authentication in TMS is JWT-based.
+* Users receive a **short-lived access token** (default 15 minutes) after login.
+* A **long-lived refresh token** (valid for 7 days) is issued alongside and stored securely in the `UserToken` table.
+* Access tokens are never reused; the frontend silently refreshes them before expiry.
+* Every API request must include the access token in the Authorization header.
+* API Gateway validates the token signature and expiry before forwarding to any service.
+
+### 2. Role-Based Access Control (RBAC)
+
+* RBAC governs what actions a user or service can perform.
+* Roles are hierarchical and scoped: `OWNER`, `ADMIN`, `DEVELOPER`, `VIEWER`.
+* Each role defines access to certain modules:
+
+  * `OWNER`: full access to all organizations, users, and integrations.
+  * `ADMIN`: manage AWS, GitHub, and clusters, but cannot delete organizations.
+  * `DEVELOPER`: manage jobs, workflows, and logs.
+  * `VIEWER`: read-only access to dashboards and metrics.
+* Role mappings are stored in the `RBAC` table.
+* RBAC rules are enforced both at the API Gateway layer and within Lambda handlers.
+
+### 3. Service Identity and Token Exchange
+
+* Every internal Lambda or microservice also authenticates using a **service token**.
+* These tokens are issued by the `User Service` and validated via a shared secret.
+* When one service invokes another (for example, Connect → EKS), it uses a **temporary service token** signed with a time-based expiry.
+* This prevents lateral movement between services if a single token is compromised.
+
+### 4. AWS IAM Integration
+
+* Each connected AWS account creates a dedicated IAM role with **external ID trust** for TMS.
+* This ensures TMS can assume the role only when the external ID matches the organization ID in the `Connect Table`.
+* The IAM policy grants least-privilege access:
+
+  * EC2, EKS, CloudFormation, S3, IAM, and CloudWatch actions are restricted to the TMS-managed resources.
+* Pulumi assumes these roles dynamically during cluster provisioning.
+
+### 5. Data Protection
+
+* All network traffic is served over HTTPS using TLS 1.3.
+* DynamoDB and S3 data are encrypted at rest using AWS-managed KMS keys.
+* No plaintext tokens or credentials are ever stored.
+* Secrets such as GitHub PATs or SMTP credentials are encrypted before storage using AES-256 and decrypted only at runtime inside the Lambda memory space.
+
+### 6. Session and Revocation Handling
+
+* Logout triggers a hard delete of the refresh token from the `UserToken` table.
+* Token revocation also propagates via the Event Bus to all services.
+* Revoked tokens are cached in memory for instant validation failure.
+* If a user’s role is downgraded or revoked, the corresponding service tokens are invalidated immediately.
+
+
+
