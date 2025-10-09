@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react"
 import { softwareProjects } from "../data/projects/software"
+import { expandedProjects } from "../data/projects/software-expanded"
 import { fetchGitHubStatsForProjects, AggregatedStats } from "../utils/useGitHubStats"
 import ProjectModal from "./ProjectModal"
 
 export default function Projects() {
   const [stats, setStats] = useState<AggregatedStats[]>([])
   const [activeProject, setActiveProject] = useState<string | null>(null)
+  const [activeSection, setActiveSection] = useState<string | null>(null)
 
   useEffect(() => {
     const token = import.meta.env.VITE_GITHUB_TOKEN || ""
@@ -15,22 +17,43 @@ export default function Projects() {
   const getStats = (projectName: string) =>
     stats.find((s) => s.project === projectName)
 
+  const getSectionsForProject = (slug: string) => {
+    const project = expandedProjects.find((p) => p.slug === slug)
+    return project ? project.sections : []
+  }
+
+  const openProject = (slug: string, sectionId?: string) => {
+    setActiveProject(slug)
+    setActiveSection(sectionId || null)
+  }
+
   return (
     <section id="projects" className="projects-section">
       <h2 className="projects-heading">Projects</h2>
+
       <div className="projects-grid">
         {softwareProjects.map((proj, i) => {
           const stat = getStats(proj.name)
+          const sections = getSectionsForProject(proj.slug)
+          const imagePath = `${import.meta.env.BASE_URL}assets/projects/${proj.slug}/1.png`
+
           return (
             <div
               key={i}
               className="project-card"
-              onClick={() => setActiveProject(proj.slug)}
+              onClick={() => openProject(proj.slug)}
             >
+              {/* ---- Image ---- */}
               <div className="project-image-container">
-                <img src={`/assets/projects/${proj.slug}/1.png`} alt={proj.name} />
+                <img
+                  src={proj.image || imagePath}
+                  alt={proj.name}
+                  className="project-image"
+                  loading="lazy"
+                />
               </div>
 
+              {/* ---- Stats ---- */}
               {stat ? (
                 <div className="project-stats-bar">
                   {/* Stars */}
@@ -98,6 +121,7 @@ export default function Projects() {
                 <div className="project-stats-bar">Fetching statistics...</div>
               )}
 
+              {/* ---- Content ---- */}
               <div className="project-card-content">
                 <h3>{proj.name}</h3>
                 <p>{proj.description}</p>
@@ -107,6 +131,43 @@ export default function Projects() {
                   ))}
                 </div>
               </div>
+
+              {/* ---- Footer with dynamic sections ---- */}
+              {sections.length > 0 && (
+                <div className="project-footer">
+                  <span>See: </span>
+                  {sections.slice(0, 3).map((section, idx) => (
+                    <a
+                      key={section.id}
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        openProject(proj.slug, section.id)
+                      }}
+                    >
+                      {section.title}
+                      {idx < sections.slice(0, 3).length - 1 && " • "}
+                    </a>
+                  ))}
+                  {sections.length > 3 && (
+                    <>
+                      {" "}
+                      •{" "}
+                      <a
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          openProject(proj.slug)
+                        }}
+                      >
+                        More →
+                      </a>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           )
         })}
@@ -115,8 +176,12 @@ export default function Projects() {
       {activeProject && (
         <ProjectModal
           slug={activeProject}
+          initialSection={activeSection} // 👈 Pass section to modal
           isOpen={true}
-          onClose={() => setActiveProject(null)}
+          onClose={() => {
+            setActiveProject(null)
+            setActiveSection(null)
+          }}
         />
       )}
     </section>

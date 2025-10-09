@@ -6,9 +6,15 @@ interface ProjectModalProps {
   slug: string
   isOpen: boolean
   onClose: () => void
+  initialSection?: string | null
 }
 
-export default function ProjectModal({ slug, isOpen, onClose }: ProjectModalProps) {
+export default function ProjectModal({
+  slug,
+  isOpen,
+  onClose,
+  initialSection = null,
+}: ProjectModalProps) {
   const [content, setContent] = useState("")
   const [activeIndex, setActiveIndex] = useState(0)
   const [docTitle, setDocTitle] = useState("")
@@ -29,6 +35,13 @@ export default function ProjectModal({ slug, isOpen, onClose }: ProjectModalProp
       setDocTitle(title || project.name)
     })
   }, [slug, activeIndex, isOpen])
+
+  useEffect(() => {
+    if (isOpen && project && initialSection) {
+      const idx = project.sections.findIndex((s) => s.id === initialSection)
+      if (idx !== -1) setActiveIndex(idx)
+    }
+  }, [isOpen, initialSection, project])
 
   if (!isOpen || !project) return null
 

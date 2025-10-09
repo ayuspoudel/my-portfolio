@@ -5,6 +5,7 @@ export interface SoftwareProject {
   repos: string[]; // multiple GitHub repos
   description: string;
   tools: string[];
+  image?: string; // optional project image
 }
 
 export const softwareProjects: SoftwareProject[] = [
@@ -19,18 +20,30 @@ export const softwareProjects: SoftwareProject[] = [
       "ayuspoudel/tms-infra"
     ],
     description:
-      "A serverless multi-service platform with modular microservices, built using Node.js, MongoDB, and AWS integrations.",
-    tools: ["Node.js", "Express", "MongoDB", "AWS", "Pulumi", "ArgoCD"],
+      "TMS is a serverless multi-service platform designed for automating, orchestrating, and monitoring workloads. It’s built with Node.js microservices, MongoDB, and deep AWS integrations. Each module runs independently — from job definitions to integrations — while the control plane stays fully serverless. The platform connects to GitHub, EKS, and ArgoCD for end-to-end workflow automation.",
+    tools: ["TypeScript", "Node.js", "Express", "MongoDB", "AWS Serverless", "AWS DynamoDB", "AWS EKS", "AWS Networking", "Pulumi", "ArgoCD"],
+    image: "/src/assets/diagrams/tms/TMS.png", // path relative to /public or /src/assets
   },
-  {
-    name: "DMZ",
-    slug: "dmz",
-    repos: [
-      "ayuspoudel/dmz",
-      "ayuspoudel/homebrew-dmz"
-    ],
-    description:
-      "A full-stack Flask + Vue app visualizing CI/CD metrics, Argo CD apps, CRs, deployments, and analytics.",
-    tools: ["Flask", "Python", "MySQL", "Vue", "Grafana"],
-  },
+{
+  name: "DMZ",
+  slug: "dmz",
+  repos: [
+    "ayuspoudel/dmz",
+    "ayuspoudel/homebrew-dmz"
+  ],
+  description:
+    "DMZ is a Rust-based command line utility that manages and synchronizes dotfiles, ZSH setups, and shell modules. It provides a clean interface for initializing, backing up, and restoring configurations across systems. The project is fully automated — built with GitHub Actions, deployed via Terraform-managed EC2 runners, and uses S3 for binary storage and Homebrew for distribution.",
+  tools: [
+    "Rust",
+    "ZSH",
+    "GitHub Actions",
+    "Terraform",
+    "AWS EC2",
+    "AWS S3",
+    "AWS IAM",
+    "ReleaseOps"
+  ],
+  image: "/src/assets/diagrams/dmz/demo1.gif",
+},
+
 ];

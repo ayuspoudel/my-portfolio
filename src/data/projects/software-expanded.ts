@@ -15,7 +15,7 @@ export const expandedProjects: ProjectDocs[] = [
     slug: "tms",
     name: "Task Management System (TMS)",
     sections: [
-        {id:"demo", title:"Quick Demo", file:"demo.md"},
+      { id: "demo", title: "Quick Demo", file: "demo.md" },
       { id: "overview", title: "Overview", file: "overview.md" },
       { id: "architecture", title: "Architecture", file: "architecture.md" },
       { id: "cluster", title: "Cluster Setup", file: "cluster.md" },
@@ -24,10 +24,14 @@ export const expandedProjects: ProjectDocs[] = [
       { id: "security", title: "Security Model", file: "security.md" },
     ],
   },
-  // Later you can add more:
-  // {
-  //   slug: "dmz",
-  //   name: "Deployment Management Zone (DMZ)",
-  //   sections: [ ... ]
-  // }
+  {
+    slug: "dmz",
+    name: "DMZ (Dotfile Manager for ZSH)",
+    sections: [
+      {id: "demo", title: "Demo", file: "demo.md"},
+      { id: "overview", title: "Overview", file: "overview.md" },
+      { id: "architecture", title: "Architecture", file: "architecture.md" },
+      { id: "release", title: "Release Pipeline", file: "release.md" },
+    ],
+  },
 ]
