@@ -4,6 +4,7 @@ import SidebarEmail from "./components/SidebarEmail";
 import Hero from "./components/Hero";
 import About from "./components/About";
 import Experience from "./components/Experience";
+import Projects from "./components/Projects";
 
 function App() {
   return (
@@ -26,6 +27,11 @@ function App() {
         {/* Experience Section */}
         <section id="experience">
           <Experience />
+        </section>
+
+        {/* Projects Section */}
+        <section id="projects">
+          <Projects />
         </section>
       </main>
     </>
