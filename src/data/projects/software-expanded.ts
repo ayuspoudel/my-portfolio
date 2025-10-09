@@ -15,6 +15,7 @@ export const expandedProjects: ProjectDocs[] = [
     slug: "tms",
     name: "Task Management System (TMS)",
     sections: [
+        {id:"demo", title:"Quick Demo", file:"demo.md"},
       { id: "overview", title: "Overview", file: "overview.md" },
       { id: "architecture", title: "Architecture", file: "architecture.md" },
       { id: "cluster", title: "Cluster Setup", file: "cluster.md" },
