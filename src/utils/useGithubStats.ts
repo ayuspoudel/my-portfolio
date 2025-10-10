@@ -28,6 +28,7 @@ async function getSearchCount(query: string, headers: Record<string, string>): P
 async function fetchRepoStats(repo: string, headers: Record<string, string>): Promise<RepoStats> {
   try {
     const repoRes = await fetch(`${GITHUB_API_BASE}/repos/${repo}`, { headers })
+    if (!repoRes.ok) throw new Error(`Failed to fetch repo ${repo}`)
     const repoData = await repoRes.json()
 
     const [issuesCount, prsCount] = await Promise.all([
@@ -58,13 +59,14 @@ async function fetchRepoStats(repo: string, headers: Record<string, string>): Pr
       totalPRs: prsCount,
       totalCommits
     }
-  } catch {
+  } catch (err) {
+    console.error(`Error fetching stats for ${repo}:`, err)
     return { repo, stars: 0, forks: 0, totalIssues: 0, totalPRs: 0, totalCommits: 0 }
   }
 }
 
 export async function fetchGitHubStatsForProjects(
-  projects: { name: string; repos: string[] }[],
+  projects: { name: string; repos: (string | { label: string; repo: string })[] }[],
   token?: string
 ): Promise<AggregatedStats[]> {
   const headers = token
@@ -73,10 +75,17 @@ export async function fetchGitHubStatsForProjects(
 
   const results = await Promise.allSettled(
     projects.map(async (project) => {
-      const repoStats = await Promise.allSettled(project.repos.map((r) => fetchRepoStats(r, headers)))
+      const repoStats = await Promise.allSettled(
+        project.repos.map((r) => {
+          const repoPath = typeof r === "string" ? r : r.repo
+          return fetchRepoStats(repoPath, headers)
+        })
+      )
+
       const validStats = repoStats
         .filter((r) => r.status === "fulfilled")
         .map((r) => (r as PromiseFulfilledResult<RepoStats>).value)
+
       const totals = validStats.reduce(
         (acc, r) => ({
           stars: acc.stars + r.stars,
@@ -87,6 +96,7 @@ export async function fetchGitHubStatsForProjects(
         }),
         { stars: 0, forks: 0, totalIssues: 0, totalPRs: 0, totalCommits: 0 }
       )
+
       return { project: project.name, ...totals }
     })
   )

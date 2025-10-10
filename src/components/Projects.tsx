@@ -4,6 +4,11 @@ import { expandedProjects } from "../data/projects/software-expanded"
 import { fetchGitHubStatsForProjects, AggregatedStats } from "../utils/useGitHubStats"
 import ProjectModal from "./ProjectModal"
 
+interface RepoInfo {
+  label: string
+  repo: string
+}
+
 export default function Projects() {
   const [stats, setStats] = useState<AggregatedStats[]>([])
   const [activeProject, setActiveProject] = useState<string | null>(null)
@@ -27,6 +32,15 @@ export default function Projects() {
     setActiveSection(sectionId || null)
   }
 
+  const normalizeRepos = (repos: (string | RepoInfo)[]): RepoInfo[] => {
+    const inferredLabels = ["GitOps", "Infra", "Backend", "Frontend", "CLI", "Pulumi"]
+    return repos.map((r, i) =>
+      typeof r === "string"
+        ? { label: inferredLabels[i] || `Repo ${i + 1}`, repo: r }
+        : r
+    )
+  }
+
   return (
     <section id="projects" className="projects-section">
       <h2 className="projects-heading">Projects</h2>
@@ -36,6 +50,7 @@ export default function Projects() {
           const stat = getStats(proj.name)
           const sections = getSectionsForProject(proj.slug)
           const imagePath = `${import.meta.env.BASE_URL}assets/projects/${proj.slug}/1.png`
+          const repos = normalizeRepos(proj.repos || [])
 
           return (
             <div
@@ -56,7 +71,6 @@ export default function Projects() {
               {/* ---- Stats ---- */}
               {stat ? (
                 <div className="project-stats-bar">
-                  {/* Stars */}
                   <div className="stat-item" title="Stars">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className="icon">
                       <path
@@ -71,8 +85,6 @@ export default function Projects() {
                     </svg>
                     {stat.stars}
                   </div>
-
-                  {/* Commits */}
                   <div className="stat-item" title="Commits">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className="icon">
                       <path
@@ -84,8 +96,6 @@ export default function Projects() {
                     </svg>
                     {stat.totalCommits}
                   </div>
-
-                  {/* Issues */}
                   <div className="stat-item" title="Issues">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className="icon">
                       <path
@@ -98,8 +108,6 @@ export default function Projects() {
                     </svg>
                     {stat.totalIssues}
                   </div>
-
-                  {/* Pull Requests */}
                   <div className="stat-item" title="Pull Requests">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className="icon">
                       <path
@@ -120,6 +128,47 @@ export default function Projects() {
               ) : (
                 <div className="project-stats-bar">Fetching statistics...</div>
               )}
+              {/* ---- Repositories Section ---- */}
+              {/*repos.length > 0 && (
+                <div className="project-repo-wrapper">
+                  <div className="repo-header">Repositories</div>
+                  <div className="project-repo-list">
+                    {repos.slice(0, 4).map((r, idx) => (
+                      <div key={idx} className="repo-line">
+                        <span className="repo-label">{r.label}</span>
+                        <span className="repo-separator">→</span>
+                        <a
+                          href={`https://github.com/${r.repo}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="repo-link"
+                        >
+                          {r.repo.split("/")[1]}
+                        </a>
+                      </div>
+                    ))}
+                    {repos.length > 4 && (
+                      <div className="repo-line">
+                        <span className="repo-label">More</span>
+                        <span className="repo-separator">→</span>
+                        <a
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            openProject(proj.slug)
+                          }}
+                          className="repo-link"
+                        >
+                          +{repos.length - 4} additional
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )*/}
+
 
               {/* ---- Content ---- */}
               <div className="project-card-content">
@@ -132,7 +181,7 @@ export default function Projects() {
                 </div>
               </div>
 
-              {/* ---- Footer with dynamic sections ---- */}
+              {/* ---- Footer ---- */}
               {sections.length > 0 && (
                 <div className="project-footer">
                   <span>See: </span>
@@ -152,8 +201,7 @@ export default function Projects() {
                   ))}
                   {sections.length > 3 && (
                     <>
-                      {" "}
-                      •{" "}
+                      {" • "}
                       <a
                         href="#"
                         onClick={(e) => {
@@ -176,7 +224,7 @@ export default function Projects() {
       {activeProject && (
         <ProjectModal
           slug={activeProject}
-          initialSection={activeSection} // 👈 Pass section to modal
+          initialSection={activeSection}
           isOpen={true}
           onClose={() => {
             setActiveProject(null)

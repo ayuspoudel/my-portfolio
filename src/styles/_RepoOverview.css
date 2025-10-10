@@ -1,0 +1,75 @@
+.repo-container {
+  background: #0d1117;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 12px;
+  font-family: "Outfit", sans-serif;
+}
+
+.repo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.repo-meta h3 {
+  color: #fff;
+  margin: 0;
+}
+
+.repo-meta p {
+  color: #8b949e;
+  font-size: 0.9rem;
+  margin-top: 2px;
+}
+
+.repo-link {
+  color: #58a6ff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.repo-link:hover {
+  text-decoration: underline;
+}
+
+.repo-contents {
+  background: #161b22;
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 10px;
+  max-height: 240px;
+  overflow-y: auto;
+  font-family: monospace;
+}
+
+.repo-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.repo-item a {
+  color: #c9d1d9;
+  text-decoration: none;
+}
+
+.repo-item.folder a:hover,
+.repo-item.file a:hover {
+  color: #58a6ff;
+}
+
+.repo-languages {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: #8b949e;
+}
+
+.repo-loading,
+.repo-error {
+  font-size: 0.9rem;
+  color: #8b949e;
+}

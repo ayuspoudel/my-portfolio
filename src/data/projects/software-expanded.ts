@@ -34,4 +34,13 @@ export const expandedProjects: ProjectDocs[] = [
       { id: "release", title: "Release Pipeline", file: "release.md" },
     ],
   },
+  {
+    slug: "greenrisenepal",
+    name: "Green Rise Nepal Platform",
+    sections: [{
+      id: "overview",
+      title: "Overview",
+      file: "overview.md"
+    }]
+  }
 ]

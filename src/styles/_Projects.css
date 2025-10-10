@@ -45,14 +45,11 @@
 
 /* ---- Projects Row (scrollable) ---- */
 .projects-grid {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   gap: 30px;
   padding: 0 70px;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
+  justify-content: center;
 }
 
 .projects-grid::-webkit-scrollbar {

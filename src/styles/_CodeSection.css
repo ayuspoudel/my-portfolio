@@ -1,0 +1,23 @@
+.project-code-section {
+  margin-top: 24px;
+}
+
+.project-code-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 6px;
+}
+
+.repo-block {
+  margin-bottom: 20px;
+}
+
+.repo-block-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #c9d1d9;
+  margin-bottom: 6px;
+}
