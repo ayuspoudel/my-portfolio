@@ -10,7 +10,7 @@ export default function ProjectCodeSection({ repos }: ProjectCodeSectionProps) {
 
   return (
     <section className="project-code-section">
-      <h2 className="project-code-header">Code</h2>
+
 
       {repos.map((r, idx) => {
         const repoPath = typeof r === "string" ? r : r.repo

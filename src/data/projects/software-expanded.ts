@@ -1,3 +1,5 @@
+import { softwareProjects } from "./software"
+
 export interface ProjectSection {
   id: string
   title: string
@@ -8,9 +10,10 @@ export interface ProjectDocs {
   slug: string
   name: string
   sections: ProjectSection[]
+  repos?: (string | { label: string; repo: string })[]
 }
 
-export const expandedProjects: ProjectDocs[] = [
+const baseExpanded: ProjectDocs[] = [
   {
     slug: "tms",
     name: "Task Management System (TMS)",
@@ -28,7 +31,7 @@ export const expandedProjects: ProjectDocs[] = [
     slug: "dmz",
     name: "DMZ (Dotfile Manager for ZSH)",
     sections: [
-      {id: "demo", title: "Demo", file: "demo.md"},
+      { id: "demo", title: "Demo", file: "demo.md" },
       { id: "overview", title: "Overview", file: "overview.md" },
       { id: "architecture", title: "Architecture", file: "architecture.md" },
       { id: "release", title: "Release Pipeline", file: "release.md" },
@@ -37,10 +40,17 @@ export const expandedProjects: ProjectDocs[] = [
   {
     slug: "greenrisenepal",
     name: "Green Rise Nepal Platform",
-    sections: [{
-      id: "overview",
-      title: "Overview",
-      file: "overview.md"
-    }]
-  }
+    sections: [
+      { id: "overview", title: "Overview", file: "overview.md" },
+    ],
+  },
 ]
+
+// Merge repos from softwareProjects automatically
+export const expandedProjects: ProjectDocs[] = baseExpanded.map((p) => {
+  const match = softwareProjects.find((s) => s.slug === p.slug)
+  return {
+    ...p,
+    repos: match?.repos || [],
+  }
+})

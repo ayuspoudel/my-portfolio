@@ -13,6 +13,7 @@ export default function Projects() {
   const [stats, setStats] = useState<AggregatedStats[]>([])
   const [activeProject, setActiveProject] = useState<string | null>(null)
   const [activeSection, setActiveSection] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     const token = import.meta.env.VITE_GITHUB_TOKEN || ""
@@ -29,7 +30,21 @@ export default function Projects() {
 
   const openProject = (slug: string, sectionId?: string) => {
     setActiveProject(slug)
-    setActiveSection(sectionId || null)
+    setActiveSection(sectionId || "code")
+    setIsModalOpen(true)
+  }
+
+  const toggleCodeSection = (slug: string) => {
+    // If same project is open and it's on code → toggle to overview
+    if (activeProject === slug && isModalOpen && activeSection === "code") {
+      const project = expandedProjects.find((p) => p.slug === slug)
+      if (project && project.sections.length > 0) {
+        setActiveSection(project.sections[0].id) // go to first section (Overview)
+      }
+    } else {
+      // otherwise open directly in code
+      openProject(slug, "code")
+    }
   }
 
   const normalizeRepos = (repos: (string | RepoInfo)[]): RepoInfo[] => {
@@ -56,7 +71,7 @@ export default function Projects() {
             <div
               key={i}
               className="project-card"
-              onClick={() => openProject(proj.slug)}
+              onClick={() => openProject(proj.slug, "code")}
             >
               {/* ---- Image ---- */}
               <div className="project-image-container">
@@ -128,47 +143,6 @@ export default function Projects() {
               ) : (
                 <div className="project-stats-bar">Fetching statistics...</div>
               )}
-              {/* ---- Repositories Section ---- */}
-              {/*repos.length > 0 && (
-                <div className="project-repo-wrapper">
-                  <div className="repo-header">Repositories</div>
-                  <div className="project-repo-list">
-                    {repos.slice(0, 4).map((r, idx) => (
-                      <div key={idx} className="repo-line">
-                        <span className="repo-label">{r.label}</span>
-                        <span className="repo-separator">→</span>
-                        <a
-                          href={`https://github.com/${r.repo}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="repo-link"
-                        >
-                          {r.repo.split("/")[1]}
-                        </a>
-                      </div>
-                    ))}
-                    {repos.length > 4 && (
-                      <div className="repo-line">
-                        <span className="repo-label">More</span>
-                        <span className="repo-separator">→</span>
-                        <a
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            openProject(proj.slug)
-                          }}
-                          className="repo-link"
-                        >
-                          +{repos.length - 4} additional
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )*/}
-
 
               {/* ---- Content ---- */}
               <div className="project-card-content">
@@ -182,51 +156,69 @@ export default function Projects() {
               </div>
 
               {/* ---- Footer ---- */}
-              {sections.length > 0 && (
-                <div className="project-footer">
-                  <span>See: </span>
-                  {sections.slice(0, 3).map((section, idx) => (
+              <div className="project-footer">
+                <span>See: </span>
+
+                {/* Code link */}
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    toggleCodeSection(proj.slug)
+                  }}
+                >
+                  Code
+                </a>
+
+                {/* Separator */}
+                {sections.length > 0 && " • "}
+
+                {/* Section links */}
+                {sections.slice(0, 3).map((section, idx) => (
+                  <a
+                    key={section.id}
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      openProject(proj.slug, section.id)
+                    }}
+                  >
+                    {section.title}
+                    {idx < sections.slice(0, 3).length - 1 && " • "}
+                  </a>
+                ))}
+
+                {/* More link */}
+                {sections.length > 3 && (
+                  <>
+                    {" • "}
                     <a
-                      key={section.id}
                       href="#"
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        openProject(proj.slug, section.id)
+                        openProject(proj.slug)
                       }}
                     >
-                      {section.title}
-                      {idx < sections.slice(0, 3).length - 1 && " • "}
+                      More →
                     </a>
-                  ))}
-                  {sections.length > 3 && (
-                    <>
-                      {" • "}
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          openProject(proj.slug)
-                        }}
-                      >
-                        More →
-                      </a>
-                    </>
-                  )}
-                </div>
-              )}
+                  </>
+                )}
+              </div>
             </div>
           )
         })}
       </div>
 
-      {activeProject && (
+      {isModalOpen && activeProject && (
         <ProjectModal
           slug={activeProject}
           initialSection={activeSection}
           isOpen={true}
           onClose={() => {
+            setIsModalOpen(false)
             setActiveProject(null)
             setActiveSection(null)
           }}
