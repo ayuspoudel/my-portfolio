@@ -71,4 +71,24 @@ export const automationDesignProjects: AutomationDesignProject[] = [
     "Automation",
   ],
 },
+
+ {
+  name: "Serverless Jira–GitHub Integration",
+  slug: "jira-github",
+  repos: [
+    { label: "Lambda Repo", repo: "ayuspoudel/aws-lambda-serverless-jira-github-sync" },
+  ],
+  description:
+    "This project automates synchronization between Jira and GitHub using a fully serverless architecture. It runs as an AWS Lambda that listens to GitHub webhooks and automatically creates or updates Jira issues based on repository activity. Each event is processed in real time — the Lambda authenticates to Jira, performs triage, and pushes updates back through the REST API.",
+  tools: [
+    "AWS Lambda",
+    "Python",
+    "GitHub API",
+    "Jira REST API",
+    "Serverless",
+    "Docker",
+    "Automation",
+  ],
+},
+
 ]
