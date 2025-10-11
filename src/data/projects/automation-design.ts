@@ -91,4 +91,45 @@ export const automationDesignProjects: AutomationDesignProject[] = [
   ],
 },
 
+{
+  name: "GitHub Token Fetch Utility",
+  slug: "gh-token-fetch",
+  repos: [
+    { label: "CLI Repo", repo: "ayuspoudel/rust-gh-token-fetch" },
+  ],
+  description:
+    "A lightweight Rust-based CLI tool that automates GitHub App authentication and token retrieval. It generates JWTs from GitHub App keys, exchanges them for installation tokens, and outputs them for use in CI/CD pipelines or local automation. It also includes automated releases, version tracking, and distribution through GitHub Actions, serving as my core developer utility for integrating GitHub authentication in automated workflows.",
+  tools: [
+    "Rust",
+    "GitHub API",
+    "JWT",
+    "Server Automation",
+    "CI/CD",
+    "Release Management",
+    "CLI Tooling",
+  ],
+},
+{
+  name: "GitHub Infrastructure as Code",
+  slug: "terraform-github",
+  repos: [
+    { label: "Terraform Repo", repo: "ayuspoudel/terraform-github-ayuspo" },
+  ],
+  description:
+    "This repository defines and manages my entire GitHub organization through Terraform and Terragrunt. Every repository, team, secret, and configuration is represented as code — making GitHub itself fully declarative and version-controlled. The setup uses a custom Rust-based token fetcher and GitHub App authentication, allowing secure, short-lived token generation during CI/CD runs without static credentials.",
+  tools: [
+    "Terraform",
+    "Terragrunt",
+    "GitHub API",
+    "Rust",
+    "Python",
+    "GitHub Actions",
+    "OIDC",
+    "Infrastructure as Code",
+    "Automation",
+  ],
+},
+
+
+
 ]
