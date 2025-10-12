@@ -1,5 +1,3 @@
-// src/data/projects/automation-design.ts
-
 export interface RepoMapping {
   label: string
   repo: string
@@ -34,6 +32,26 @@ export const automationDesignProjects: AutomationDesignProject[] = [
     ],
   },
   {
+    name: "Pulumi EKS Automation Framework",
+    slug: "pulumi-eks",
+    repos: [
+      { label: "Pulumi Repo", repo: "ayuspoudel/pulumi-eks" },
+    ],
+    description:
+      "This repository automates the complete provisioning of EKS clusters using Pulumi and TypeScript. It builds everything from networking and IAM to Argo CD and IRSA mappings in a single programmatic workflow. The setup defines the full AWS stack including VPC, security groups, managed node groups, and GitOps bootstrapping with Argo CD. It acts as my core EKS automation framework, used for both production and experimental Kubernetes environments. It was also used in tms k8s service.",
+    tools: [
+      "Pulumi",
+      "TypeScript",
+      "AWS EKS",
+      "AWS Networking", 
+      "AWS EC2",
+      "Argo CD",
+      "IAM / IRSA",
+      "GitOps",
+      "Automation",
+    ],
+  },
+  {
     name: "GitHub OIDC Terragrunt Setup",
     slug: "oidc-terragrunt",
     repos: [
@@ -50,86 +68,80 @@ export const automationDesignProjects: AutomationDesignProject[] = [
       "Security Automation",
     ],
   },
-
   {
-  name: "Pulumi EKS Automation Framework",
-  slug: "pulumi-eks",
-  repos: [
-    { label: "Pulumi Repo", repo: "ayuspoudel/pulumi-eks" },
-  ],
-  description:
-    "This repository automates the complete provisioning of EKS clusters using Pulumi and TypeScript. It builds everything from networking and IAM to Argo CD and IRSA mappings in a single programmatic workflow. The setup defines the full AWS stack including VPC, security groups, managed node groups, and GitOps bootstrapping with Argo CD. It acts as my core EKS automation framework, used for both production and experimental Kubernetes environments. It was also used in tms k8s service.",
-  tools: [
-    "Pulumi",
-    "TypeScript",
-    "AWS EKS",
-    "AWS Networking", 
-    "AWS EC2",
-    "Argo CD",
-    "IAM / IRSA",
-    "GitOps",
-    "Automation",
-  ],
-},
-
- {
-  name: "Serverless Jira–GitHub Integration",
-  slug: "jira-github",
-  repos: [
-    { label: "Lambda Repo", repo: "ayuspoudel/aws-lambda-serverless-jira-github-sync" },
-  ],
-  description:
-    "This project automates synchronization between Jira and GitHub using a fully serverless architecture. It runs as an AWS Lambda that listens to GitHub webhooks and automatically creates or updates Jira issues based on repository activity. Each event is processed in real time — the Lambda authenticates to Jira, performs triage, and pushes updates back through the REST API.",
-  tools: [
-    "AWS Lambda",
-    "Python",
-    "GitHub API",
-    "Jira REST API",
-    "Serverless",
-    "Docker",
-    "Automation",
-  ],
-},
-
-{
-  name: "GitHub Token Fetch Utility",
-  slug: "gh-token-fetch",
-  repos: [
-    { label: "CLI Repo", repo: "ayuspoudel/rust-gh-token-fetch" },
-  ],
-  description:
-    "A lightweight Rust-based CLI tool that automates GitHub App authentication and token retrieval. It generates JWTs from GitHub App keys, exchanges them for installation tokens, and outputs them for use in CI/CD pipelines or local automation. It also includes automated releases, version tracking, and distribution through GitHub Actions, serving as my core developer utility for integrating GitHub authentication in automated workflows.",
-  tools: [
-    "Rust",
-    "GitHub API",
-    "JWT",
-    "Server Automation",
-    "CI/CD",
-    "Release Management",
-    "CLI Tooling",
-  ],
-},
-{
-  name: "GitHub Infrastructure as Code",
-  slug: "terraform-github",
-  repos: [
-    { label: "Terraform Repo", repo: "ayuspoudel/terraform-github-ayuspo" },
-  ],
-  description:
-    "This repository defines and manages my entire GitHub organization through Terraform and Terragrunt. Every repository, team, secret, and configuration is represented as code — making GitHub itself fully declarative and version-controlled. The setup uses a custom Rust-based token fetcher and GitHub App authentication, allowing secure, short-lived token generation during CI/CD runs without static credentials.",
-  tools: [
-    "Terraform",
-    "Terragrunt",
-    "GitHub API",
-    "Rust",
-    "Python",
-    "GitHub Actions",
-    "OIDC",
-    "Infrastructure as Code",
-    "Automation",
-  ],
-},
-
-
-
+    name: "GitHub Infrastructure as Code",
+    slug: "terraform-github",
+    repos: [
+      { label: "Terraform Repo", repo: "ayuspoudel/terraform-github-ayuspo" },
+    ],
+    description:
+      "This repository defines and manages my entire GitHub organization through Terraform and Terragrunt. Every repository, team, secret, and configuration is represented as code — making GitHub itself fully declarative and version-controlled. The setup uses a custom Rust-based token fetcher and GitHub App authentication, allowing secure, short-lived token generation during CI/CD runs without static credentials.",
+    tools: [
+      "Terraform",
+      "Terragrunt",
+      "GitHub API",
+      "Rust",
+      "Python",
+      "GitHub Actions",
+      "OIDC",
+      "Infrastructure as Code",
+      "Automation",
+    ],
+  },
+  {
+    name: "GitHub Token Fetch Utility",
+    slug: "gh-token-fetch",
+    repos: [
+      { label: "CLI Repo", repo: "ayuspoudel/rust-gh-token-fetch" },
+    ],
+    description:
+      "A lightweight Rust-based CLI tool that automates GitHub App authentication and token retrieval. It generates JWTs from GitHub App keys, exchanges them for installation tokens, and outputs them for use in CI/CD pipelines or local automation. It also includes automated releases, version tracking, and distribution through GitHub Actions, serving as my core developer utility for integrating GitHub authentication in automated workflows.",
+    tools: [
+      "Rust",
+      "GitHub API",
+      "JWT",
+      "Server Automation",
+      "CI/CD",
+      "Release Management",
+      "CLI Tooling",
+    ],
+  },
+  {
+    name: "Serverless Jira–GitHub Integration",
+    slug: "jira-github",
+    repos: [
+      { label: "Lambda Repo", repo: "ayuspoudel/aws-lambda-serverless-jira-github-sync" },
+    ],
+    description:
+      "This project automates synchronization between Jira and GitHub using a fully serverless architecture. It runs as an AWS Lambda that listens to GitHub webhooks and automatically creates or updates Jira issues based on repository activity. Each event is processed in real time — the Lambda authenticates to Jira, performs triage, and pushes updates back through the REST API.",
+    tools: [
+      "AWS Lambda",
+      "Python",
+      "GitHub API",
+      "Jira REST API",
+      "Serverless",
+      "Docker",
+      "Automation",
+    ],
+  },
+  {
+    name: "Canvas Automation API",
+    slug: "canvas-api",
+    repos: [
+      { label: "Serverless Repo", repo: "ayuspoudel/canvas-api" },
+    ],
+    description:
+      "A fully serverless automation framework that integrates with the Canvas LMS API to fetch, process, and store course data. It uses AWS Lambda, Step Functions, and API Gateway to orchestrate ingestion workflows, backed by PostgreSQL for event persistence and reporting. The repo includes modular Node.js services for data upsertion and synchronization, along with Terraform infrastructure definitions for deploying the entire pipeline. Python and shell scripts automate reporting, issue tracking, and synchronization tasks, making this a self-sustaining data ingestion and analytics layer.",
+    tools: [
+      "Terraform",
+      "AWS Lambda",
+      "AWS Step Functions",
+      "AWS API Gateway",
+      "Node.js",
+      "PostgreSQL",
+      "Python",
+      "Serverless",
+      "Automation",
+    ],
+  },
 ]

@@ -5,6 +5,7 @@ import Hero from "./components/Hero";
 import About from "./components/About";
 import Experience from "./components/Experience";
 import Projects from "./components/Projects";
+import Automation from "./components/Automation";
 
 function App() {
   return (
@@ -14,24 +15,24 @@ function App() {
       <SidebarEmail />
 
       <main>
-        {/* Hero Section */}
         <section id="hero">
           <Hero />
         </section>
 
-        {/* About Section */}
         <section id="about">
           <About />
         </section>
 
-        {/* Experience Section */}
         <section id="experience">
           <Experience />
         </section>
 
-        {/* Projects Section */}
         <section id="projects">
           <Projects />
+        </section>
+
+        <section id="automation">
+          <Automation />
         </section>
       </main>
     </>
