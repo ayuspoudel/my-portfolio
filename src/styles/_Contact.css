@@ -1,0 +1,140 @@
+/* === Section Wrapper === */
+.contact-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 100vh; /* fills viewport vertically */
+  padding: 5rem 1.5rem;
+  background: transparent;
+  font-family: "Outfit", sans-serif;
+  text-align: center;
+}
+
+/* === Container === */
+.contact-container {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  background: rgba(18, 26, 46, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.35);
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* === Heading === */
+.contact-heading {
+  font-size: 2rem;
+  color: #e6f1ff;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.contact-subtext {
+  color: #a8b2d1;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 2.5rem;
+  max-width: 440px;
+}
+
+/* === Form === */
+.contact-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.input-group span {
+  color: #8fa3c7;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+}
+
+.input-group input,
+.input-group textarea {
+  width: 91%;
+  padding: 0.9rem 1.1rem;
+  background: rgba(15, 25, 44, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  color: #ccd6f6;
+  font-size: 0.95rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  outline: none;
+  resize: none;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  border-color: rgba(100, 255, 218, 0.3);
+  box-shadow: 0 0 8px rgba(100, 255, 218, 0.1);
+}
+
+/* === Button === */
+.contact-button {
+  background: linear-gradient(90deg, #00f5a0, #00d9ff);
+  color: #0a192f;
+  font-weight: 600;
+  padding: 0.9rem 1.3rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.contact-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(0, 255, 200, 0.15);
+}
+
+.contact-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* === Status Message === */
+.contact-status {
+  margin-top: 1.8rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.contact-status.success {
+  color: #64ffda;
+}
+
+.contact-status.error {
+  color: #ff7b7b;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .contact-container {
+    padding: 2.2rem 1.6rem;
+  }
+
+  .contact-heading {
+    font-size: 1.7rem;
+  }
+
+  .contact-subtext {
+    font-size: 0.9rem;
+  }
+
+  .contact-button {
+    width: 100%;
+  }
+}

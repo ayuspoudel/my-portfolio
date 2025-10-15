@@ -58,7 +58,7 @@ export default function Projects() {
 
   return (
     <section id="projects" className="projects-section">
-      <h2 className="projects-heading">Projects</h2>
+      <h2 className="projects-heading"><span className="experience__number">03. </span>Projects</h2>
 
       <div className="projects-grid">
         {softwareProjects.map((proj, i) => {

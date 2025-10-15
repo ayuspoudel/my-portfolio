@@ -6,7 +6,7 @@ import About from "./components/About";
 import Experience from "./components/Experience";
 import Projects from "./components/Projects";
 import Automation from "./components/Automation";
-
+import ContactMe from "./components/Contact";
 function App() {
   return (
     <>
@@ -33,6 +33,10 @@ function App() {
 
         <section id="automation">
           <Automation />
+        </section>
+
+        <section id="contact">
+          <ContactMe />
         </section>
       </main>
     </>
