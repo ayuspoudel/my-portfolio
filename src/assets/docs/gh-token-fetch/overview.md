@@ -16,20 +16,6 @@ The utility handles the full authentication flow required by GitHub Apps:
 
 The process takes only a few milliseconds and avoids storing credentials anywhere. It’s designed to be used by pipelines or server-side jobs that need short-lived GitHub access without human interaction.
 
-Here’s a simplified flow:
-
-```
-
-Private Key (.pem)
-↓
-Generate JWT (jwt.rs)
-↓
-Exchange via GitHub API (fetch_token.rs)
-↓
-Receive short-lived Installation Token
-
-```
-
 The token can then be used to clone repositories, call the GitHub REST API, or trigger actions programmatically — all without ever exposing a personal access token.
 
 # Design

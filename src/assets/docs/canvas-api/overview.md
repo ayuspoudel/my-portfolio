@@ -9,7 +9,7 @@ MongoDB acts as the persistence layer, storing raw and processed data for report
 ### What it does
 
 - Uses AWS Step Functions to coordinate multiple ETL steps  
-- Extracts data from Canvas (or any API) through scheduled or triggered Lambda runs  
+- Extracts data from Canvas through triggered Lambda runs  
 - Transforms and cleans data in intermediate Lambda stages  
 - Stores processed data in MongoDB for dashboards, reporting, or further aggregation  
 - Uses Terraform to provision infrastructure and define execution roles  

@@ -14,5 +14,6 @@ export async function loadMarkdown(slug: string, file: string): Promise<string> 
   } catch (err) {
     console.error(`Failed to load markdown for ${slug}/${file}`, err)
     return `<p style="color:#f87171">Error loading document: ${slug}/${file}</p>`
+    
   }
 }
