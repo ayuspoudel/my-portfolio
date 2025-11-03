@@ -1,0 +1,246 @@
+/* === Section === */
+.automation-timeline-section {
+  margin-top: 5rem;
+  padding: 3rem 0 6rem;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.automation-heading {
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: #ccd6f6;
+  margin-bottom: 4rem;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+/* === Timeline Core === */
+.automation-timeline {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.automation-timeline::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, #00e0a0, #00b3ff);
+  opacity: 0.55;
+  border-radius: 2px;
+  z-index: 0;
+}
+
+/* === Project Item === */
+.automation-timeline-item {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  margin-bottom: 7rem;
+  z-index: 1;
+}
+
+.automation-timeline-item.reverse {
+  flex-direction: row-reverse;
+}
+
+/* === Node === */
+.timeline-node {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  background: #0a192f;
+  border: 2px solid #00f5a0;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(0, 255, 200, 0.35);
+  z-index: 3;
+}
+
+/* === Left: Project Info (Static) === */
+.project-info {
+  flex: 1;
+  background: rgba(18, 26, 46, 0.96);
+  border-radius: 14px 0 0 14px;
+  padding: 2rem 2.4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  color: #a8b2d1;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  transition: background 0.25s ease, border-color 0.25s ease;
+  cursor: default;
+}
+
+/* .project-info:hover {
+  background: rgba(20, 29, 52, 0.97);
+  border-color: rgba(100, 255, 218, 0.05);
+} */
+
+.automation-title {
+  color: #e6f1ff;
+  font-size: 1.55rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.01em;
+}
+
+.github-meta a {
+  font-size: 0.9rem;
+  color: #7aa2f7;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.github-meta a:hover {
+  color: #a2b8ff;
+}
+
+/* === Tool Pills === */
+.automation-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.55rem;
+  margin-top: 1.4rem;
+}
+
+.tool-pill {
+  background: rgba(100, 255, 218, 0.08);
+  border: 1px solid rgba(100, 255, 218, 0.22);
+  color: #64ffda;
+  padding: 0.32rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.73rem;
+  font-weight: 500;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.tool-pill:hover {
+  background: rgba(100, 255, 218, 0.14);
+  border-color: rgba(100, 255, 218, 0.35);
+  /* transform: translateY(-1px); */
+}
+
+/* === Repo Card (Static) === */
+.automation-repo-card {
+  margin-top: 1rem;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: border-color 0.25s ease;
+}
+
+.automation-repo-card:hover {
+  border-color: rgba(100, 255, 218, 0.08);
+}
+
+/* === Right: Description (Clickable) === */
+.project-desc {
+  flex: 1;
+  background: rgba(18, 26, 46, 0.96);
+  border-radius: 0 14px 14px 0;
+  padding: 2rem 2.4rem;
+  color: #a8b2d1;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.project-desc:hover {
+  /* transform: translateY(-2px); */
+  background: rgba(23, 33, 58, 0.97);
+  border-color: rgba(100, 255, 218, 0.08);
+}
+
+/* Clickable cue (→) */
+.project-desc::after {
+  content: "→";
+  font-size: 1rem;
+  opacity: 0;
+  margin-left: 0.4rem;
+  color: #64ffda;
+  position: absolute;
+  right: 1.6rem;
+  bottom: 1.8rem;
+  transition: opacity 0.2s ease, transform 0.25s ease;
+}
+
+.project-desc:hover::after {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+.project-desc p {
+  margin-bottom: 1.2rem;
+  color: #b0bdd7;
+}
+
+.automation-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  font-size: 0.88rem;
+}
+
+.automation-links a {
+  color: #64ffda;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.automation-links a:hover {
+  color: #89ffe5;
+}
+
+/* === Responsive === */
+@media (max-width: 1024px) {
+  .automation-timeline::before {
+    left: 24px;
+  }
+
+  .automation-timeline-item,
+  .automation-timeline-item.reverse {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 2rem;
+    gap: 1.5rem;
+  }
+
+  .project-info,
+  .project-desc {
+    width: 100%;
+    border-radius: 12px;
+  }
+
+  .timeline-node {
+    left: 16px;
+  }
+
+  .project-desc::after {
+    right: 1.2rem;
+    bottom: 1.4rem;
+  }
+}

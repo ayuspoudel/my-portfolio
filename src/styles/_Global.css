@@ -1,0 +1,42 @@
+:root {
+  --color-navy: #0a192f;
+  --color-slate: #8892b0;
+  --color-light-slate: #ccd6f6;
+  --color-green: #64ffda;
+
+  --font-main: 'Inter', sans-serif;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font-main);
+  background-color: var(--color-navy);
+  color: var(--color-light-slate);
+
+  /* smooth scrolling for anchor links */
+  scroll-behavior: smooth;
+}
+
+/* === Scroll Snapping Container === */
+main {
+  height: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory; /* snap vertically */
+}
+
+/* === Each Section === */
+section {
+  min-height: 100vh;             /* full screen height */
+  scroll-snap-align: start;      /* snap to top of section */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;       /* vertically center content */
+  padding: 4rem 2rem;
+}
+
+/* Links */
+a {
+  text-decoration: none;
+  color: inherit;
+}

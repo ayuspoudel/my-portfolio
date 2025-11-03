@@ -1,0 +1,143 @@
+/* Base sidebar */
+.sidebar {
+  position: fixed;
+  bottom: 0rem;              
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;                /* balanced spacing */
+  padding: 0.5rem 0;
+  z-index: 50;
+}
+
+.sidebar--left {
+  left: 1.25rem;              /* tucked closer to corner */
+}
+
+.sidebar--right {
+  right: 1.25rem;             /* tucked closer to corner */
+}
+
+/* Reset list */
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 1.5rem;
+}
+
+/* Decorative line */
+.sidebar::after {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 150px;              
+  margin-top: 1rem;
+  background-color: #8892b0;
+  opacity: 0.6;
+}
+
+
+/* Social icons       */
+.sidebar__icon {
+  position: relative;
+  color: #ccd6f6;
+  font-size: 18px;            
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #8892b0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.sidebar__icon:hover {
+  color: #64ffda;
+  border-color: #64ffda;
+  background-color: rgba(100, 255, 218, 0.1);
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Tooltip for icons */
+.sidebar__icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 120%;                 /* show on right side */
+  top: 50%;
+  transform: translateY(-50%) translateX(-6px);
+  background: #0a192f;
+  color: #64ffda;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  border: 1px solid #64ffda;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.sidebar__icon:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0); /* slide in */
+}
+
+
+/* Email (right side) */
+
+.email {
+  position: relative;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  letter-spacing: 2px;
+  font-size: 18px;            /* slightly reduced */
+  color: #ccd6f6;
+  transition: color 0.3s ease, transform 0.3s ease;
+  text-decoration: none;
+}
+
+.email:hover {
+  color: #64ffda;
+  transform: translateY(-2px);
+}
+
+/* Tooltip for email */
+.email::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: 120%;                /* show on left side */
+  top: 50%;
+  transform: translateY(-50%) translateX(6px);
+  writing-mode: horizontal-tb;
+  background: #0a192f;
+  color: #64ffda;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  border: 1px solid #64ffda;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.email:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0); /* slide in */
+}
+
+/* ------------------ */
+/* Responsive tweaks  */
+/* ------------------ */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+}

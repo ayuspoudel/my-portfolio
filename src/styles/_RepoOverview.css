@@ -1,0 +1,180 @@
+/* === Repo Card === */
+.repo-card {
+  background-color: #0d1f36; /* matches modal */
+  border: 1px solid #17375d;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  padding: 1.1rem 1.3rem;
+  transition: border-color 0.25s ease;
+  box-shadow: 0 0 12px rgba(100, 255, 218, 0.04);
+}
+
+.repo-card:hover {
+  border-color: #1f4b7a;
+  transform: translateY(-2px);
+}
+
+/* === Header === */
+.repo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.repo-title {
+  color: #e6f1ff;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1rem;
+  letter-spacing: 0.25px;
+}
+
+.repo-title:hover {
+  color: #64ffda;
+}
+
+.repo-commit {
+  color: #a8b7ce;
+  font-size: 0.82rem;
+  margin-top: 0.25rem;
+  font-family: "JetBrains Mono", monospace;
+  opacity: 0.95;
+}
+
+.repo-action {
+  color: #64ffda;
+  font-size: 0.9rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.repo-action:hover {
+  color: #9ffff0;
+}
+
+/* === File List === */
+.repo-filelist {
+  background-color: #0b213e;
+  border-radius: 8px;
+  margin-top: 0.7rem;
+  border: 1px solid #13385e;
+  max-height: 240px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #1f3a5d #0b213e;
+}
+
+.repo-filelist::-webkit-scrollbar {
+  width: 6px;
+}
+
+.repo-filelist::-webkit-scrollbar-thumb {
+  background-color: #1f3a5d;
+  border-radius: 4px;
+}
+
+.repo-filelist::-webkit-scrollbar-track {
+  background-color: #0b213e;
+}
+
+.repo-file-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 1.1rem;
+  text-decoration: none;
+  color: #c9d7ef;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.86rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.repo-file-row:hover {
+  background-color: #112a4a;
+  color: #64ffda;
+}
+
+.repo-file-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  opacity: 0.85;
+  color: #64ffda;
+}
+
+.repo-filename {
+  flex: 1;
+}
+
+/* === Language Bar === */
+.repo-langbar {
+  margin-top: 1rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid #13385e;
+  font-size: 0.78rem;
+  color: #a9b7cf;
+}
+
+.repo-lang {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.35rem 0;
+}
+
+.lang-name {
+  width: 90px;
+  color: #c9d7ef;
+  font-weight: 500;
+}
+
+.lang-bar {
+  flex: 1;
+  height: 6px;
+  background: #112a4a;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.lang-fill {
+  display: block;
+  height: 100%;
+}
+
+.lang-percent {
+  color: #64ffda;
+  font-family: "JetBrains Mono", monospace;
+  width: 45px;
+  text-align: right;
+  opacity: 0.9;
+}
+
+/* Add inner padding so repo cards don't touch modal edges */
+.code-wrapper {
+  padding: 0px 10px 10px;  
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  min-height: 0;
+  background: #0d1f36;
+  /* overflow-y: auto; */
+}
+
+/* Optional — make sure scroll doesn’t cut off shadow or borders */
+.code-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.code-wrapper::-webkit-scrollbar-thumb {
+  background-color: #1f3a5d;
+  border-radius: 4px;
+}
+
+.code-wrapper::-webkit-scrollbar-track {
+  background-color: #0d1f36;
+}

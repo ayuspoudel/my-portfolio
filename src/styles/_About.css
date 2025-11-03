@@ -1,0 +1,297 @@
+/* === About Section === */
+.about {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 2rem;
+  background: #0a192f;
+}
+
+.about__heading,
+.about__bio,
+.about__dag {
+  max-width: 900px;
+  width: 100%;
+}
+
+.about__heading {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #ccd6f6;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.about__number {
+  color: #64ffda;
+  font-family: monospace;
+  font-size: 1.2rem;
+}
+
+.about__bio {
+  color: #8892b0;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  font-size: 16px;
+}
+
+/* === DAG Section Wrapper === */
+.about__dag {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: rgba(17, 34, 64, 0.7);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* === DAG Container === */
+.dag {
+  position: relative;
+  width: 100%;
+  min-height: 250px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.dag__svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.dag__edge {
+  stroke: #64ffda;
+  stroke-width: 2;
+  opacity: 0.9;
+  transition: stroke 0.2s ease;
+  marker-end: url(#arrowhead);
+}
+
+/* === DAG Nodes === */
+.dag__node {
+  position: absolute;
+  background: #112240;
+  border: 1px solid #233554;
+  border-radius: 12px;
+  color: #ccd6f6;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  padding: 0.5rem 0.5rem;
+  min-width: 150px;
+  max-width: 185px;
+  white-space: normal;
+  word-break: break-word;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.dag__node:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 14px rgba(100, 255, 218, 0.25);
+  border-color: #64ffda;
+}
+
+/* === Node Header (icon + title inline) === */
+.dag__header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dag__icon {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dag__label {
+  font-weight: 600;
+  color: #ccd6f6;
+}
+
+/* === Subtext === */
+.dag__subtitle {
+  font-size: 0.8rem;
+  color: #8892b0; /* company line */
+}
+
+.dag__date {
+  font-size: 0.75rem;
+  color: #6c7a91; /* lighter gray for date */
+}
+
+.dag__status {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: #ffcc66;
+}
+
+/* === States === */
+.dag__node--done .dag__label {
+  color: #64ffda;
+}
+
+.dag__node--pending {
+  border-color: #d29922;
+}
+
+.dag__node--pending .dag__label {
+  color: #d29922;
+  font-weight: 700;
+}
+
+/* Spinner animation for inprogress */
+.spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.dag__node--activelypending {
+  border-color: #39ff14; /* neon green border */
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.4);
+}
+.dag__node--activelypending .dag__label {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+/* Pulsing shiny green dot */
+.pulse-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #39ff14;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14;
+  animation: pulse 1.2s infinite ease-in-out;
+}
+@keyframes pulse {
+  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+  70% { transform: scale(1); box-shadow: 0 0 0 12px rgba(34,197,94,0); }
+  100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+/* Modal */
+.dag__modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(10, 25, 47, 0.85); /* match about bg */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 2rem;
+}
+.dag__modal-content {
+  background: #112240; /* match DAG cards */
+  border: 1px solid #233554;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 850px;
+  color: #ccd6f6;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  padding: 2rem;
+  position: relative;
+  animation: fadeIn 0.25s ease;
+}
+.dag__modal-close {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  border: none;
+  background: none;
+  font-size: 1.4rem;
+  color: #8892b0;
+  cursor: pointer;
+}
+.dag__modal-close:hover { color: #64ffda; }
+
+/* Title + meta */
+.dag__modal-header h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: #ccd6f6;
+}
+.dag__modal-meta {
+  font-size: 0.9rem;
+  color: #8892b0;
+  margin-bottom: 1rem;
+}
+.dag__modal-description {
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #aebace;
+}
+
+/* Steps container */
+.dag__steps {
+  border: 1px solid #233554;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Step rows */
+.dag__step {
+  background: #0d1b2a;
+  border-top: 1px solid #233554;
+}
+.dag__step:first-child { border-top: none; }
+
+.dag__step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #ccd6f6;
+  transition: background 0.2s ease;
+}
+.dag__step-header:hover {
+  background: #172a46;
+}
+
+.dag__step-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+}
+
+/* Title inside step */
+.dag__step-title {
+  flex: 1;
+}
+
+.dag__step-body {
+  background: #112240;
+  padding: 0.9rem 1.2rem;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.85rem;
+  color: #c9d1d9;
+  line-height: 1.5;
+  border-top: 1px solid #233554;
+
+  white-space: pre-wrap;     
+  overflow-wrap: break-word; 
+}
