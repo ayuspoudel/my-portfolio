@@ -6,7 +6,7 @@ export interface ExperienceItem {
   role: string;
   period: string;
   bullets: string[];
-  logo: string; // 👈 path to logo image
+  logo: string; 
 }
 
 export const experiences: ExperienceItem[] = [
