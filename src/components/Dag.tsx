@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FaCheckCircle, FaClock, FaSync } from "react-icons/fa";
-import { nodes, edges, Node, Step } from "../data/About";
+import { nodes, edges, Node, Step } from "../data/about";
 
 // StepItem component for modal
 function StepItem({ step }: { step: Step }) {
@@ -113,7 +113,8 @@ export default function Dag() {
       {nodes.map((node) => (
         <div
           key={node.id}
-          ref={(el) => (nodeRefs.current[node.id] = el)}
+          ref={(el) => { nodeRefs.current[node.id] = el; }}
+
           className={`dag__node dag__node--${node.status}`}
           style={{
             left: node.x,

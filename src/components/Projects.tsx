@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { softwareProjects } from "../data/projects/software"
 import { expandedProjects } from "../data/projects/software-expanded"
-import { fetchGitHubStatsForProjects, AggregatedStats } from "../utils/useGitHubStats"
+import { fetchGitHubStatsForProjects, AggregatedStats } from "../utils/useGithubStats"
 import ProjectModal from "./ProjectModal"
 
 interface RepoInfo {

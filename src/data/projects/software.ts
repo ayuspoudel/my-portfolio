@@ -38,7 +38,7 @@ export const softwareProjects: SoftwareProject[] = [
       "Pulumi",
       "ArgoCD",
     ],
-    image: "/src/assets/diagrams/tms/TMS.png",
+    image: "/diagrams/tms/TMS.png",
   },
   {
     name: "DMZ",
@@ -59,7 +59,7 @@ export const softwareProjects: SoftwareProject[] = [
       "AWS IAM",
       "ReleaseOps",
     ],
-    image: "/src/assets/diagrams/dmz/demo1.gif",
+    image: "/diagrams/dmz/demo1.gif",
   },
   {
     name: "Green Rise Nepal Platform",
@@ -78,7 +78,7 @@ export const softwareProjects: SoftwareProject[] = [
       "React Router",
       "Docker",
     ],
-    image: "/src/assets/diagrams/greenrise/greenrise-main.png",
+    image: "/diagrams/greenrisenepal/greenrise.gif",
   },
 
 ]

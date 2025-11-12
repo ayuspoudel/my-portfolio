@@ -4,7 +4,7 @@ import { automationDesignExpanded } from "../data/projects/automation-design-exp
 import {
   fetchGitHubStatsForProjects,
   AggregatedStats,
-} from "../utils/useGitHubStats"
+} from "../utils/useGithubStats"
 import AutomationModal from "./AutomationModal"
 import SweetRepoOverview from "./SweetRepoOverview"
 

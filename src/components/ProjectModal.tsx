@@ -122,7 +122,8 @@ export default function ProjectModal({
         <div className="project-content">
           {activeIndex === "code" ? (
             <div className="project-markdown code-wrapper">
-              <ProjectCodeSection repos={project.repos} />
+              <ProjectCodeSection repos={project.repos ?? []} />
+
             </div>
           ) : (
             <div

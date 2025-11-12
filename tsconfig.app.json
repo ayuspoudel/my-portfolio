@@ -15,7 +15,7 @@
     "isolatedModules": true,
     "noEmit": true,
 
-    // 👇 absolutely required
+    // absolutely required
     "jsx": "react-jsx"
   },
   "include": ["src"],

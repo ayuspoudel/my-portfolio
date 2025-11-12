@@ -1,6 +1,6 @@
 export const links = {
-  github: "https://github.com/ayush",
-  linkedin: "https://linkedin.com/in/ayush",
+  github: "https://github.com/ayuspoudel",
+  linkedin: "https://linkedin.com/in/workwithayush",
   resume: "/resume.pdf",
-  email: "ayush@example.com",
+  email: "ayushpoudel2003@gmail.com",
 };

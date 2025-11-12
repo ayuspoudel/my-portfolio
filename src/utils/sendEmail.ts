@@ -4,6 +4,7 @@ interface EmailPayload {
   from_name: string
   from_email: string
   message: string
+  [key: string]: string // added to satisfy Record<string, unknown>
 }
 
 export async function sendEmail(payload: EmailPayload) {
@@ -11,7 +12,7 @@ export async function sendEmail(payload: EmailPayload) {
   const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
   const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 
-  // --- Prevent runtime issues if env vars are missing ---
+  //  Prevent runtime issues if env vars are missing 
   if (!serviceId || !templateId || !publicKey) {
     return {
       success: false,
@@ -20,13 +21,13 @@ export async function sendEmail(payload: EmailPayload) {
   }
 
   try {
-    await emailjs.send(serviceId, templateId, payload, publicKey)
+    // patch: safely cast payload to Record<string, unknown>
+    await emailjs.send(serviceId, templateId, payload as Record<string, unknown>, publicKey)
     return {
       success: true,
       message: "Message sent successfully!",
     }
   } catch {
-    // no console.log or console.error in production
     return {
       success: false,
       message: "Failed to send message. Please try again later.",

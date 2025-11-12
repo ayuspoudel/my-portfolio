@@ -69,9 +69,12 @@ export async function fetchGitHubStatsForProjects(
   projects: { name: string; repos: (string | { label: string; repo: string })[] }[],
   token?: string
 ): Promise<AggregatedStats[]> {
-  const headers = token
-    ? { Authorization: `token ${token}`, Accept: "application/vnd.github+json" }
-    : { Accept: "application/vnd.github+json" }
+
+  //PATCH: ensure headers is always Record<string, string>
+  const headers: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    ...(token ? { Authorization: `token ${token}` } : {})
+  }
 
   const results = await Promise.allSettled(
     projects.map(async (project) => {

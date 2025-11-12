@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { experiences } from "../data/Experience";
+import { experiences } from "../data/experience";
 
 export default function Experience() {
   const [activeId, setActiveId] = useState(experiences[0].id);
